@@ -12,7 +12,7 @@ fn main() {
 
 fn validate(args: &Vec<String>) -> &String {
     if args.len() != 2 {
-        panic!();
+        panic!("Argument length must be 2!");
     }
     return &args[1];
 }
@@ -20,7 +20,7 @@ fn validate(args: &Vec<String>) -> &String {
 fn get_content(filename: &String) -> String {
     let exists = Path::new(&filename).is_file();
     if !exists {
-        panic!();
+        panic!("File at specified path doesn't exist!");
     }
     return fs::read_to_string(filename).unwrap();
 }
