@@ -7,6 +7,7 @@ fn main() {
     let filename = validate(&args);
 
     let content = get_content(filename);
+    print!("\x1Bc");
     println!("{}", content);
 }
 
