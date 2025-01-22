@@ -1,14 +1,18 @@
 use std::env;
 use std::fs;
 use std::path::Path;
+use std::thread::sleep;
+use std::time::Duration;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = validate(&args);
 
     let content = get_content(filename);
-    print!("\x1Bc");
+    print!("\x1B[?1049h");
     println!("{}", content);
+    sleep(Duration::from_secs(5));
+    print!("\x1B[?1049l");
 }
 
 fn validate(args: &Vec<String>) -> &String {
