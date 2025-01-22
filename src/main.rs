@@ -10,6 +10,7 @@ fn main() {
 
     let content = get_content(filename);
     print!("\x1B[?1049h");
+    print!("\x1B[H");
     println!("{}", content);
     sleep(Duration::from_secs(5));
     print!("\x1B[?1049l");
