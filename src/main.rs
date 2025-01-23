@@ -1,8 +1,6 @@
 use std::env;
 use std::fs;
 use std::path::Path;
-use std::thread::sleep;
-use std::time::Duration;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -12,7 +10,10 @@ fn main() {
     print!("\x1B[?1049h");
     print!("\x1B[H");
     println!("{}", content);
-    sleep(Duration::from_secs(5));
+    let mut buffer: String = String::new();
+    std::io::stdin()
+        .read_line(&mut buffer)
+        .expect("Input error!");
     print!("\x1B[?1049l");
 }
 
