@@ -5,16 +5,15 @@ use std::path::Path;
 fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = validate(&args);
-
     let content = get_content(filename);
-    print!("\x1B[?1049h");
-    print!("\x1B[H");
+    init();
+
     println!("{}", content);
     let mut buffer: String = String::new();
     std::io::stdin()
         .read_line(&mut buffer)
         .expect("Input error!");
-    print!("\x1B[?1049l");
+    drop();
 }
 
 fn validate(args: &Vec<String>) -> &String {
@@ -30,4 +29,13 @@ fn get_content(filename: &String) -> String {
         panic!("File at specified path doesn't exist!");
     }
     return fs::read_to_string(filename).unwrap();
+}
+
+fn init() {
+    print!("\x1B[?1049h");
+    print!("\x1B[H");
+}
+
+fn drop() {
+    print!("\x1B[?1049l");
 }
