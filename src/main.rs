@@ -9,7 +9,7 @@ fn main() {
     let content = get_content(&filename);
     console::init();
 
-    println!("{}", content);
+    console::print(&content, 3);
     let mut buffer: String = String::new();
     std::io::stdin()
         .read_line(&mut buffer)
