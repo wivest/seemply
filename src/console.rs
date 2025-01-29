@@ -15,6 +15,11 @@ pub fn print(content: &String, height: i32) {
     }
 }
 
+fn get_height() -> i32 {
+    print!("\x1B[18t");
+    0
+}
+
 pub fn drop() {
     print!("\x1B[?1049l");
 }
