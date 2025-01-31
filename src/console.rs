@@ -15,8 +15,15 @@ pub fn print(content: &String, height: i32) {
     }
 }
 
-fn get_height() -> i32 {
+pub fn get_height() -> i32 {
     print!("\x1B[18t");
+
+    let mut buffer = String::new();
+    let size = std::io::stdin()
+        .read_line(&mut buffer)
+        .expect("Init input error!");
+    println!("{} | size: {}", &buffer[2..], size);
+
     0
 }
 

@@ -8,6 +8,7 @@ fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
     console::init();
+    console::get_height();
 
     console::print(&content, 3);
     let mut buffer: String = String::new();
