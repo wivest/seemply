@@ -1,6 +1,6 @@
 pub fn init() {
-    print!("\x1B[?1049h");
-    print!("\x1B[H");
+    println!("\x1B[?1049h");
+    println!("\x1B[H");
 }
 
 pub fn print(content: &String, height: i32) {
@@ -16,7 +16,7 @@ pub fn print(content: &String, height: i32) {
 }
 
 pub fn get_height() -> i32 {
-    print!("\x1B[18t");
+    println!("\x1B[18t");
 
     let mut buffer = String::new();
     let size = std::io::stdin()
@@ -28,5 +28,5 @@ pub fn get_height() -> i32 {
 }
 
 pub fn drop() {
-    print!("\x1B[?1049l");
+    println!("\x1B[?1049l");
 }
