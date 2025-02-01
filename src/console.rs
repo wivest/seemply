@@ -1,3 +1,5 @@
+use std::{io::Write, process::Command};
+
 pub fn init() {
     println!("\x1B[?1049h");
     println!("\x1B[H");
@@ -16,13 +18,13 @@ pub fn print(content: &String, height: i32) {
 }
 
 pub fn get_height() -> i32 {
-    println!("\x1B[18t");
+    let output = Command::new("cmd")
+        .args(["/C", "echo \x1B[18t"])
+        .output()
+        .expect("Output failed!");
 
-    let mut buffer = String::new();
-    let size = std::io::stdin()
-        .read_line(&mut buffer)
-        .expect("Init input error!");
-    println!("{} | size: {}", &buffer[2..], size);
+    let answer = String::from_utf8(output.stdout).unwrap();
+    println!("{}", answer);
 
     0
 }
