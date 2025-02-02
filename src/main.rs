@@ -11,7 +11,7 @@ fn main() {
     let c = Console::new();
     console::get_height();
 
-    console::print(&content, 3);
+    c.print(&content);
     let mut buffer: String = String::new();
     std::io::stdin()
         .read_line(&mut buffer)

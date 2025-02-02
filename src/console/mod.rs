@@ -1,7 +1,6 @@
 mod platform;
 
 pub struct Console {
-    width: i32,
     height: i32,
 }
 
@@ -10,9 +9,18 @@ impl Console {
         println!("\x1B[?1049h");
         println!("\x1B[H");
 
-        Console {
-            width: 0,
-            height: 0,
+        Console { height: 3 }
+    }
+
+    pub fn print(&self, content: &String) {
+        let lines = content.lines();
+        let mut i = 0;
+        for line in lines {
+            if i >= self.height {
+                break;
+            }
+            println!("{line}");
+            i += 1;
         }
     }
 }
@@ -20,18 +28,6 @@ impl Console {
 impl Drop for Console {
     fn drop(&mut self) {
         println!("\x1B[?1049l");
-    }
-}
-
-pub fn print(content: &String, height: i32) {
-    let lines = content.lines();
-    let mut i = 0;
-    for line in lines {
-        if i >= height {
-            break;
-        }
-        println!("{line}");
-        i += 1;
     }
 }
 
