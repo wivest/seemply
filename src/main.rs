@@ -8,10 +8,10 @@ mod console;
 fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
-    let c = Console::new();
-    console::get_height();
 
+    let c = Console::new();
     c.print(&content);
+
     let mut buffer: String = String::new();
     std::io::stdin()
         .read_line(&mut buffer)

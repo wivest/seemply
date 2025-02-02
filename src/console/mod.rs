@@ -9,7 +9,9 @@ impl Console {
         println!("\x1B[?1049h");
         println!("\x1B[H");
 
-        Console { height: 3 }
+        Console {
+            height: get_height(),
+        }
     }
 
     pub fn print(&self, content: &String) {
@@ -31,7 +33,7 @@ impl Drop for Console {
     }
 }
 
-pub fn get_height() -> i32 {
+fn get_height() -> i32 {
     let output = platform::get_command()
         .arg("\x1B[18t")
         .output()
@@ -40,5 +42,5 @@ pub fn get_height() -> i32 {
     let answer = String::from_utf8(output.stdout).unwrap();
     println!("{}", answer);
 
-    0
+    3
 }
