@@ -1,8 +1,26 @@
 mod platform;
 
-pub fn init() {
-    println!("\x1B[?1049h");
-    println!("\x1B[H");
+pub struct Console {
+    width: i32,
+    height: i32,
+}
+
+impl Console {
+    pub fn new() -> Self {
+        println!("\x1B[?1049h");
+        println!("\x1B[H");
+
+        Console {
+            width: 0,
+            height: 0,
+        }
+    }
+}
+
+impl Drop for Console {
+    fn drop(&mut self) {
+        println!("\x1B[?1049l");
+    }
 }
 
 pub fn print(content: &String, height: i32) {
@@ -27,8 +45,4 @@ pub fn get_height() -> i32 {
     println!("{}", answer);
 
     0
-}
-
-pub fn drop() {
-    println!("\x1B[?1049l");
 }

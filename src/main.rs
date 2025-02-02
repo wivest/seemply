@@ -1,3 +1,4 @@
+use console::Console;
 use std::fs;
 use std::path::Path;
 
@@ -7,7 +8,7 @@ mod console;
 fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
-    console::init();
+    let c = Console::new();
     console::get_height();
 
     console::print(&content, 3);
@@ -15,7 +16,6 @@ fn main() {
     std::io::stdin()
         .read_line(&mut buffer)
         .expect("Input error!");
-    console::drop();
 }
 
 fn get_content(filename: &String) -> String {
