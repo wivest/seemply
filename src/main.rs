@@ -1,6 +1,5 @@
 use console::Console;
 use std::fs;
-use std::path::Path;
 
 mod args;
 mod console;
@@ -19,9 +18,5 @@ fn main() {
 }
 
 fn get_content(filename: &String) -> String {
-    let exists = Path::new(&filename).is_file();
-    if !exists {
-        panic!("File at specified path doesn't exist!");
-    }
-    return fs::read_to_string(filename).unwrap();
+    fs::read_to_string(filename).expect("File at specified path doesn't exist!")
 }
