@@ -34,8 +34,7 @@ impl Drop for Console {
 }
 
 fn get_height() -> i32 {
-    let output = platform::get_command()
-        .arg("\x1B[18t")
+    let output = platform::get_command("\x1B[18t")
         .output()
         .expect("Output failed!");
 
