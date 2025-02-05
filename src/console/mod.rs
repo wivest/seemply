@@ -7,11 +7,13 @@ pub struct Console {
 impl Console {
     pub fn new() -> Self {
         println!("\x1B[?1049h");
-        println!("\x1B[H");
 
-        Console {
+        let console = Console {
             height: get_height(),
-        }
+        };
+        print!("\x1B[H");
+
+        console
     }
 
     pub fn print(&self, content: &String) {
