@@ -11,10 +11,12 @@ fn main() {
     let c = Console::new();
     c.print(&content);
 
-    let mut buffer: String = String::new();
-    std::io::stdin()
-        .read_line(&mut buffer)
-        .expect("Input error!");
+    loop {
+        let command = c.ask_command();
+        if command == "q" {
+            break;
+        }
+    }
 }
 
 fn get_content(filename: &String) -> String {

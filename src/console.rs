@@ -1,3 +1,5 @@
+use std::io::Write;
+
 pub struct Console {
     height: u16,
 }
@@ -22,6 +24,19 @@ impl Console {
             println!("{line}");
             i += 1;
         }
+    }
+
+    pub fn ask_command(&self) -> String {
+        print!("\x1B[{};1H", self.height);
+        std::io::stdout()
+            .flush()
+            .expect("Failed to put cursor to bottom!");
+
+        let mut command = String::new();
+        std::io::stdin()
+            .read_line(&mut command)
+            .expect("Unable to read command!");
+        command
     }
 }
 
