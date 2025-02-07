@@ -1,19 +1,15 @@
-mod platform;
-
 pub struct Console {
-    height: i32,
+    height: u16,
 }
 
 impl Console {
     pub fn new() -> Self {
         println!("\x1B[?1049h");
-
-        let console = Console {
-            height: get_height(),
-        };
         print!("\x1B[H");
 
-        console
+        Console {
+            height: get_height(),
+        }
     }
 
     pub fn print(&self, content: &String) {
@@ -35,13 +31,7 @@ impl Drop for Console {
     }
 }
 
-fn get_height() -> i32 {
-    let output = platform::get_command("\x1B[18t")
-        .output()
-        .expect("Output failed!");
-
-    let answer = String::from_utf8(output.stdout).unwrap();
-    println!("{}", answer);
-
-    3
+fn get_height() -> u16 {
+    let size = termsize::get().expect("Expected to get size!");
+    size.rows
 }
