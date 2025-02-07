@@ -36,7 +36,7 @@ impl Console {
         std::io::stdin()
             .read_line(&mut command)
             .expect("Unable to read command!");
-        command
+        command.trim().to_owned()
     }
 }
 
