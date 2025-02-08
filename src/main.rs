@@ -8,14 +8,15 @@ fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
 
-    let c = Console::new();
-    c.print(&content);
+    let con = Console::new();
+    con.print(&content);
 
     loop {
-        let command = c.ask_command();
+        let command = con.ask_command();
         if command == "q" {
             break;
         }
+        con.print(&content);
     }
 }
 

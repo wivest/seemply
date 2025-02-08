@@ -7,7 +7,6 @@ pub struct Console {
 impl Console {
     pub fn new() -> Self {
         println!("\x1B[?1049h");
-        print!("\x1B[H");
 
         Console {
             height: get_height(),
@@ -15,8 +14,12 @@ impl Console {
     }
 
     pub fn print(&self, content: &String) {
+        println!("\x1B[?1049h");
+        print!("\x1B[H");
+        std::io::stdout().flush().expect("Failed to move cursor!");
+
         let lines = content.lines();
-        let mut i = 0;
+        let mut i = 1;
         for line in lines {
             if i >= self.height {
                 break;
