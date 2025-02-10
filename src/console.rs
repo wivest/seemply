@@ -1,5 +1,7 @@
 use std::io::Write;
 
+use crossterm::{execute, terminal::LeaveAlternateScreen};
+
 pub struct Console {
     height: u16,
 }
@@ -45,7 +47,8 @@ impl Console {
 
 impl Drop for Console {
     fn drop(&mut self) {
-        println!("\x1B[?1049l");
+        execute!(std::io::stdout(), LeaveAlternateScreen)
+            .expect("Failed to exit alternate screen!");
     }
 }
 
