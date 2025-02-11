@@ -1,6 +1,9 @@
 use std::io::Write;
 
-use crossterm::{execute, terminal::LeaveAlternateScreen};
+use crossterm::{
+    execute,
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen},
+};
 
 pub struct Console {
     height: u16,
@@ -8,7 +11,8 @@ pub struct Console {
 
 impl Console {
     pub fn new() -> Self {
-        println!("\x1B[?1049h");
+        execute!(std::io::stdout(), EnterAlternateScreen)
+            .expect("Failed to enter alternate screen!");
 
         Console {
             height: get_height(),
