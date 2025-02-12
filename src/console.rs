@@ -2,7 +2,7 @@ use std::io::Write;
 
 use crossterm::{
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
 pub struct Console {
@@ -57,6 +57,6 @@ impl Drop for Console {
 }
 
 fn get_height() -> u16 {
-    let size = termsize::get().expect("Expected to get size!");
-    size.rows
+    let size = terminal::size().expect("Failed to get terminal size!");
+    size.1
 }
