@@ -1,6 +1,7 @@
 use std::io::Write;
 
 use crossterm::{
+    cursor::MoveTo,
     execute,
     terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -36,10 +37,7 @@ impl Console {
     }
 
     pub fn ask_command(&self) -> String {
-        print!("\x1B[{};1H", self.height);
-        std::io::stdout()
-            .flush()
-            .expect("Failed to put cursor to bottom!");
+        execute!(std::io::stdout(), MoveTo(0, self.height - 1)).expect("Failed to move cursor!");
 
         let mut command = String::new();
         std::io::stdin()
