@@ -8,13 +8,19 @@ fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
 
-    let con = Console::new();
+    let mut con = Console::new();
     con.print(&content);
 
     loop {
         let command = con.ask_command();
         if command == "q" {
             break;
+        }
+        if command == "w" {
+            con.scroll -= 1;
+        }
+        if command == "s" {
+            con.scroll += 1;
         }
         con.print(&content);
     }

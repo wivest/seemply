@@ -8,6 +8,7 @@ use crossterm::{
 
 pub struct Console {
     height: u16,
+    pub scroll: u16,
 }
 
 impl Console {
@@ -18,6 +19,7 @@ impl Console {
 
         Console {
             height: get_height(),
+            scroll: 0,
         }
     }
 
@@ -30,13 +32,16 @@ impl Console {
         .expect("Failed to move cursor!");
 
         let lines = content.lines();
-        let mut i = 1;
+        let mut i = 0;
         for line in lines {
-            if i >= self.height {
+            i += 1;
+            if i <= self.scroll {
+                continue;
+            }
+            if i >= self.height + self.scroll {
                 break;
             }
             println!("{line}");
-            i += 1;
         }
     }
 
