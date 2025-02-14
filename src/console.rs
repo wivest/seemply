@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::io::{Read, Write};
 
 use crossterm::{
     cursor::MoveTo,
@@ -12,6 +12,7 @@ pub struct Console {
 
 impl Console {
     pub fn new() -> Self {
+        terminal::enable_raw_mode().expect("Failed to enable raw mode!");
         execute!(std::io::stdout(), EnterAlternateScreen)
             .expect("Failed to enter alternate screen!");
 
@@ -41,7 +42,7 @@ impl Console {
 
         let mut command = String::new();
         std::io::stdin()
-            .read_line(&mut command)
+            .read_to_string(&mut command)
             .expect("Unable to read command!");
         command.trim().to_owned()
     }
@@ -51,6 +52,7 @@ impl Drop for Console {
     fn drop(&mut self) {
         execute!(std::io::stdout(), LeaveAlternateScreen)
             .expect("Failed to exit alternate screen!");
+        terminal::disable_raw_mode().expect("Failed to disable raw mode!");
     }
 }
 
