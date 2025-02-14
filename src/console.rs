@@ -1,9 +1,9 @@
-use std::io::{Read, Write};
+use std::io::Read;
 
 use crossterm::{
     cursor::MoveTo,
     execute,
-    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
 pub struct Console {
@@ -22,9 +22,12 @@ impl Console {
     }
 
     pub fn print(&self, content: &String) {
-        println!("\x1B[?1049h");
-        print!("\x1B[H");
-        std::io::stdout().flush().expect("Failed to move cursor!");
+        execute!(
+            std::io::stdout(),
+            Clear(terminal::ClearType::All),
+            MoveTo(0, 0)
+        )
+        .expect("Failed to move cursor!");
 
         let lines = content.lines();
         let mut i = 1;
