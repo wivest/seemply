@@ -17,10 +17,10 @@ fn main() {
             break;
         }
         if command == "w" {
-            con.scroll -= 1;
+            con.scroll_up(1);
         }
         if command == "s" {
-            con.scroll += 1;
+            con.scroll_down(1);
         }
         con.print(&content);
     }

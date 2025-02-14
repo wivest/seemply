@@ -8,7 +8,7 @@ use crossterm::{
 
 pub struct Console {
     height: u16,
-    pub scroll: u16,
+    scroll: u16,
 }
 
 impl Console {
@@ -43,6 +43,18 @@ impl Console {
             }
             println!("{line}");
         }
+    }
+
+    pub fn scroll_up(&mut self, by: u16) {
+        if self.scroll <= by {
+            self.scroll = 0;
+        } else {
+            self.scroll -= by;
+        }
+    }
+
+    pub fn scroll_down(&mut self, by: u16) {
+        self.scroll += by;
     }
 
     pub fn ask_command(&self) -> String {
