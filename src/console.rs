@@ -1,7 +1,7 @@
 use std::{io::Read, u8};
 
 use crossterm::{
-    cursor::MoveTo,
+    cursor::{Hide, MoveTo, Show},
     execute,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -14,7 +14,7 @@ pub struct Console {
 impl Console {
     pub fn new() -> Self {
         terminal::enable_raw_mode().expect("Failed to enable raw mode!");
-        execute!(std::io::stdout(), EnterAlternateScreen)
+        execute!(std::io::stdout(), EnterAlternateScreen, Hide)
             .expect("Failed to enter alternate screen!");
 
         Console {
@@ -68,7 +68,7 @@ impl Console {
 
 impl Drop for Console {
     fn drop(&mut self) {
-        execute!(std::io::stdout(), LeaveAlternateScreen)
+        execute!(std::io::stdout(), LeaveAlternateScreen, Show)
             .expect("Failed to exit alternate screen!");
         terminal::disable_raw_mode().expect("Failed to disable raw mode!");
     }
