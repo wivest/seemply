@@ -58,8 +58,6 @@ impl Console {
     }
 
     pub fn ask_command(&self) -> u8 {
-        execute!(std::io::stdout(), MoveTo(0, self.height - 1)).expect("Failed to move cursor!");
-
         let mut buf: [u8; 1] = [0; 1];
         std::io::stdin()
             .read_exact(&mut buf)
