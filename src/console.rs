@@ -28,12 +28,7 @@ impl Console {
     }
 
     pub fn print(&self, content: &String) {
-        queue!(
-            std::io::stdout(),
-            Clear(terminal::ClearType::All),
-            MoveTo(0, 0)
-        )
-        .expect("Failed to move cursor!");
+        queue!(std::io::stdout(), MoveTo(0, 0)).expect("Failed to move cursor!");
 
         let lines = content.lines();
         let mut i = 0;
@@ -45,8 +40,12 @@ impl Console {
             if i >= self.height + self.scroll {
                 break;
             }
-            queue!(std::io::stdout(), Print(line.to_owned() + "\n"))
-                .expect("Failed to print line!");
+            queue!(
+                std::io::stdout(),
+                Clear(terminal::ClearType::CurrentLine),
+                Print(line.to_owned() + "\n")
+            )
+            .expect("Failed to print line!");
         }
         std::io::stdout().flush().expect("Failed to flush!");
     }
