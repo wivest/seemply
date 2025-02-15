@@ -13,13 +13,13 @@ fn main() {
 
     loop {
         let command = con.ask_command();
-        if command == "q" {
+        if command == b'q' {
             break;
         }
-        if command == "w" {
+        if command == b'w' {
             con.scroll_up(1);
         }
-        if command == "s" {
+        if command == b's' {
             con.scroll_down(1);
         }
         con.print(&content);

@@ -1,4 +1,4 @@
-use std::io::Read;
+use std::{io::Read, u8};
 
 use crossterm::{
     cursor::MoveTo,
@@ -57,14 +57,14 @@ impl Console {
         self.scroll += by;
     }
 
-    pub fn ask_command(&self) -> String {
+    pub fn ask_command(&self) -> u8 {
         execute!(std::io::stdout(), MoveTo(0, self.height - 1)).expect("Failed to move cursor!");
 
-        let mut command = String::new();
+        let mut buf: [u8; 1] = [0; 1];
         std::io::stdin()
-            .read_to_string(&mut command)
+            .read_exact(&mut buf)
             .expect("Unable to read command!");
-        command.trim().to_owned()
+        buf[0]
     }
 }
 
