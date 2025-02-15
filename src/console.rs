@@ -1,8 +1,12 @@
-use std::{io::Read, u8};
+use std::{
+    io::{Read, Write},
+    u8,
+};
 
 use crossterm::{
     cursor::{Hide, MoveTo, Show},
-    execute,
+    execute, queue,
+    style::Print,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
@@ -24,7 +28,7 @@ impl Console {
     }
 
     pub fn print(&self, content: &String) {
-        execute!(
+        queue!(
             std::io::stdout(),
             Clear(terminal::ClearType::All),
             MoveTo(0, 0)
@@ -41,8 +45,10 @@ impl Console {
             if i >= self.height + self.scroll {
                 break;
             }
-            println!("{line}");
+            queue!(std::io::stdout(), Print(line.to_owned() + "\n"))
+                .expect("Failed to print line!");
         }
+        std::io::stdout().flush().expect("Failed to flush!");
     }
 
     pub fn scroll_up(&mut self, by: u16) {
