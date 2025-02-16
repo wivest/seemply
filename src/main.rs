@@ -9,7 +9,7 @@ fn main() {
     let content = get_content(&filename);
 
     let mut con = Console::new();
-    con.print(&content);
+    con.print(&content).expect("Failed to print content!");
 
     loop {
         let command = con.ask_command();
@@ -22,7 +22,7 @@ fn main() {
         if command == b's' {
             con.scroll_down(1);
         }
-        con.print(&content);
+        con.print(&content).expect("Failed to print content!");
     }
 }
 
