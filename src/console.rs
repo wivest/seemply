@@ -62,12 +62,10 @@ impl Console {
         self.scroll += by;
     }
 
-    pub fn ask_command(&self) -> u8 {
+    pub fn ask_command(&self) -> Result<u8, std::io::Error> {
         let mut buf: [u8; 1] = [0; 1];
-        std::io::stdin()
-            .read_exact(&mut buf)
-            .expect("Unable to read command!");
-        buf[0]
+        std::io::stdin().read_exact(&mut buf)?;
+        Ok(buf[0])
     }
 }
 

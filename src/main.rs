@@ -12,7 +12,7 @@ fn main() {
     con.print(&content).expect("Failed to print content!");
 
     loop {
-        let command = con.ask_command();
+        let command = con.ask_command().expect("Failed to ask command!");
         if command == b'q' {
             break;
         }
