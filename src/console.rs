@@ -1,5 +1,5 @@
 use std::{
-    io::{Read, Write},
+    io::{self, Read, Write},
     u8,
 };
 
@@ -16,15 +16,14 @@ pub struct Console {
 }
 
 impl Console {
-    pub fn new() -> Self {
-        terminal::enable_raw_mode().expect("Failed to enable raw mode!");
-        execute!(std::io::stdout(), EnterAlternateScreen, Hide)
-            .expect("Failed to enter alternate screen!");
+    pub fn new() -> Result<Self, io::Error> {
+        terminal::enable_raw_mode()?;
+        execute!(std::io::stdout(), EnterAlternateScreen, Hide)?;
 
-        Console {
-            height: get_height(),
+        Ok(Console {
+            height: get_height()?,
             scroll: 0,
-        }
+        })
     }
 
     pub fn print(&self, content: &String) -> Result<(), std::io::Error> {
@@ -77,7 +76,7 @@ impl Drop for Console {
     }
 }
 
-fn get_height() -> u16 {
-    let size = terminal::size().expect("Failed to get terminal size!");
-    size.1
+fn get_height() -> Result<u16, io::Error> {
+    let size = terminal::size()?;
+    Ok(size.1)
 }

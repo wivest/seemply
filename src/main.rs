@@ -8,7 +8,7 @@ fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
 
-    let mut con = Console::new();
+    let mut con = Console::new().expect("Failed to initialize console!");
     con.print(&content).expect("Failed to print content!");
 
     loop {
