@@ -11,8 +11,9 @@ use crossterm::{
 };
 
 pub struct Console {
+    pub width: u16,
+    pub height: u16,
     content: String,
-    height: u16,
     scroll: u16,
 }
 
@@ -20,10 +21,12 @@ impl Console {
     pub fn new(content: String) -> Result<Self, Error> {
         terminal::enable_raw_mode()?;
         execute!(std::io::stdout(), EnterAlternateScreen, Hide)?;
+        let size = terminal::size()?;
 
         Ok(Console {
+            width: size.0,
+            height: size.1,
             content,
-            height: get_height()?,
             scroll: 0,
         })
     }
@@ -76,9 +79,4 @@ impl Drop for Console {
             .expect("Failed to exit alternate screen!");
         terminal::disable_raw_mode().expect("Failed to disable raw mode!");
     }
-}
-
-fn get_height() -> Result<u16, Error> {
-    let size = terminal::size()?;
-    Ok(size.1)
 }
