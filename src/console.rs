@@ -11,25 +11,27 @@ use crossterm::{
 };
 
 pub struct Console {
+    content: String,
     height: u16,
     scroll: u16,
 }
 
 impl Console {
-    pub fn new() -> Result<Self, io::Error> {
+    pub fn new(content: String) -> Result<Self, io::Error> {
         terminal::enable_raw_mode()?;
         execute!(std::io::stdout(), EnterAlternateScreen, Hide)?;
 
         Ok(Console {
+            content,
             height: get_height()?,
             scroll: 0,
         })
     }
 
-    pub fn print(&self, content: &String) -> Result<(), std::io::Error> {
+    pub fn print(&self) -> Result<(), std::io::Error> {
         queue!(std::io::stdout(), MoveTo(0, 0))?;
 
-        let lines = content.lines();
+        let lines = self.content.lines();
         let mut i = 0;
         for line in lines {
             i += 1;

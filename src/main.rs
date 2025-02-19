@@ -8,8 +8,8 @@ fn main() {
     let filename = args::get_filename();
     let content = get_content(&filename);
 
-    let mut con = Console::new().expect("Failed to initialize console!");
-    con.print(&content).expect("Failed to print content!");
+    let mut con = Console::new(content).expect("Failed to initialize console!");
+    con.print().expect("Failed to print content!");
 
     loop {
         let command = con.ask_command().expect("Failed to ask command!");
@@ -22,7 +22,7 @@ fn main() {
         if command == b's' {
             con.scroll_down(1);
         }
-        con.print(&content).expect("Failed to print content!");
+        con.print().expect("Failed to print content!");
     }
 }
 
