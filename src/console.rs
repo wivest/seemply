@@ -1,5 +1,5 @@
 use std::{
-    io::{self, Read, Write},
+    io::{Error, Read, Write},
     u8,
 };
 
@@ -17,7 +17,7 @@ pub struct Console {
 }
 
 impl Console {
-    pub fn new(content: String) -> Result<Self, io::Error> {
+    pub fn new(content: String) -> Result<Self, Error> {
         terminal::enable_raw_mode()?;
         execute!(std::io::stdout(), EnterAlternateScreen, Hide)?;
 
@@ -28,7 +28,7 @@ impl Console {
         })
     }
 
-    pub fn print(&self) -> Result<(), std::io::Error> {
+    pub fn print(&self) -> Result<(), Error> {
         queue!(std::io::stdout(), MoveTo(0, 0))?;
 
         let lines = self.content.lines();
@@ -63,7 +63,7 @@ impl Console {
         self.scroll += by;
     }
 
-    pub fn ask_command(&self) -> Result<u8, std::io::Error> {
+    pub fn ask_command(&self) -> Result<u8, Error> {
         let mut buf: [u8; 1] = [0; 1];
         std::io::stdin().read_exact(&mut buf)?;
         Ok(buf[0])
@@ -78,7 +78,7 @@ impl Drop for Console {
     }
 }
 
-fn get_height() -> Result<u16, io::Error> {
+fn get_height() -> Result<u16, Error> {
     let size = terminal::size()?;
     Ok(size.1)
 }
