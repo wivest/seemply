@@ -1,8 +1,10 @@
 use console::Console;
+use cursor::Cursor;
 use std::fs;
 
 mod args;
 mod console;
+mod cursor;
 
 fn main() {
     let filename = args::get_filename();
@@ -10,6 +12,8 @@ fn main() {
 
     let mut con = Console::new(content).expect("Failed to initialize console!");
     con.print().expect("Failed to print content!");
+
+    let cursor = Cursor::new(&con);
 
     loop {
         let command = con.ask_command().expect("Failed to ask command!");
