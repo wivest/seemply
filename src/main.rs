@@ -1,10 +1,8 @@
 use console::Console;
-use cursor::Cursor;
 use std::fs;
 
 mod args;
 mod console;
-mod cursor;
 
 fn main() {
     let filename = args::get_filename();
@@ -13,18 +11,16 @@ fn main() {
     let mut con = Console::new(content).expect("Failed to initialize console!");
     con.print().expect("Failed to print content!");
 
-    let cursor = Cursor::new(&mut con);
-
     loop {
-        let command = con.ask_command().expect("Failed to ask command!");
+        let command = Console::ask_command().expect("Failed to ask command!");
         if command == b'q' {
             break;
         }
         if command == b'w' {
-            con.scroll_up(1);
+            con.cursor_up(1).expect("Failed to move cursor!");
         }
         if command == b's' {
-            con.scroll_down(1);
+            con.cursor_down(1).expect("Failed to move cursor!");
         }
         con.print().expect("Failed to print content!");
     }

@@ -4,15 +4,15 @@ use std::{
 };
 
 use crossterm::{
-    cursor::{Hide, MoveTo, Show},
+    cursor::{Hide, MoveTo, MoveToRow, Show},
     execute, queue,
     style::Print,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
 pub struct Console {
-    pub width: u16,
-    pub height: u16,
+    height: u16,
+    cursor: (u16, u16),
     content: String,
     scroll: u16,
 }
@@ -24,8 +24,8 @@ impl Console {
         let size = terminal::size()?;
 
         Ok(Console {
-            width: size.0,
             height: size.1,
+            cursor: (0, 0),
             content,
             scroll: 0,
         })
@@ -54,7 +54,37 @@ impl Console {
         Ok(())
     }
 
-    pub fn scroll_up(&mut self, by: u16) {
+    pub fn cursor_up(&mut self, by: u16) -> Result<(), Error> {
+        let (actual, delta) = if self.cursor.1 <= by {
+            (0, by - self.cursor.1)
+        } else {
+            (self.cursor.1 - by, 0)
+        };
+
+        execute!(std::io::stdout(), MoveToRow(actual))?;
+        self.scroll_up(delta);
+        self.cursor.1 = actual;
+
+        Ok(())
+    }
+
+    pub fn cursor_down(&mut self, by: u16) -> Result<(), Error> {
+        let calc = self.cursor.1 + by;
+        let actual = if calc >= self.height {
+            self.height - 1
+        } else {
+            calc
+        };
+        let delta = calc - actual;
+
+        execute!(std::io::stdout(), MoveToRow(actual))?;
+        self.scroll_down(delta);
+        self.cursor.1 = actual;
+
+        Ok(())
+    }
+
+    fn scroll_up(&mut self, by: u16) {
         if self.scroll <= by {
             self.scroll = 0;
         } else {
@@ -62,11 +92,11 @@ impl Console {
         }
     }
 
-    pub fn scroll_down(&mut self, by: u16) {
+    fn scroll_down(&mut self, by: u16) {
         self.scroll += by;
     }
 
-    pub fn ask_command(&self) -> Result<u8, Error> {
+    pub fn ask_command() -> Result<u8, Error> {
         let mut buf: [u8; 1] = [0; 1];
         std::io::stdin().read_exact(&mut buf)?;
         Ok(buf[0])
