@@ -18,16 +18,18 @@ impl<'a> Cursor<'a> {
     }
 
     pub fn move_down(&mut self, by: u16) -> Result<(), Error> {
-        let h = self.pos.1 + by;
-        if h >= self.con.height {
-            let delta = h - self.con.height + 1;
-            execute!(std::io::stdout(), MoveToRow(self.con.height - 1))?;
-            self.con.scroll_down(delta);
-
-            self.pos.1 = self.con.height - 1;
+        let calc = self.pos.1 + by;
+        let actual = if calc >= self.con.height {
+            self.con.height - 1
         } else {
-            self.pos.1 = h;
-        }
+            calc
+        };
+        let delta = calc - actual;
+
+        execute!(std::io::stdout(), MoveToRow(actual))?;
+        self.con.scroll_down(delta);
+        self.pos.1 = actual;
+
         Ok(())
     }
 }
