@@ -13,7 +13,7 @@ fn main() {
     let mut con = Console::new(content).expect("Failed to initialize console!");
     con.print().expect("Failed to print content!");
 
-    let cursor = Cursor::new(&con);
+    let cursor = Cursor::new(&mut con);
 
     loop {
         let command = con.ask_command().expect("Failed to ask command!");

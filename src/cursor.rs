@@ -4,26 +4,29 @@ use crossterm::{cursor::MoveToRow, execute};
 
 use crate::console::Console;
 
-pub struct Cursor {
-    width: u16,
-    height: u16,
+pub struct Cursor<'a> {
+    con: &'a mut Console,
     pos: (u16, u16),
 }
 
-impl Cursor {
-    pub fn new(console: &Console) -> Self {
+impl<'a> Cursor<'a> {
+    pub fn new(console: &'a mut Console) -> Self {
         Cursor {
-            width: console.width,
-            height: console.height,
+            con: console,
             pos: (0, 0),
         }
     }
 
-    pub fn move_up(&mut self, by: u16) -> Result<(), Error> {
+    pub fn move_down(&mut self, by: u16) -> Result<(), Error> {
         let h = self.pos.1 + by;
-        if h >= self.height {
-            let delta = h - self.height + 1;
-            execute!(std::io::stdout(), MoveToRow(self.height - 1))?;
+        if h >= self.con.height {
+            let delta = h - self.con.height + 1;
+            execute!(std::io::stdout(), MoveToRow(self.con.height - 1))?;
+            self.con.scroll_down(delta);
+
+            self.pos.1 = self.con.height - 1;
+        } else {
+            self.pos.1 = h;
         }
         Ok(())
     }
