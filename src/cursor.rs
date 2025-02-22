@@ -17,6 +17,20 @@ impl<'a> Cursor<'a> {
         }
     }
 
+    pub fn move_up(&mut self, by: u16) -> Result<(), Error> {
+        let (actual, delta) = if self.pos.1 <= by {
+            (0, by - self.pos.1)
+        } else {
+            (self.pos.1 - by, 0)
+        };
+
+        execute!(std::io::stdout(), MoveToRow(actual))?;
+        self.con.scroll_up(delta);
+        self.pos.1 = actual;
+
+        Ok(())
+    }
+
     pub fn move_down(&mut self, by: u16) -> Result<(), Error> {
         let calc = self.pos.1 + by;
         let actual = if calc >= self.con.height {
