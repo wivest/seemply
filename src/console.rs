@@ -4,7 +4,7 @@ use std::{
 };
 
 use crossterm::{
-    cursor::{Hide, MoveTo, MoveToRow, Show},
+    cursor::{MoveTo, MoveToRow},
     execute, queue,
     style::Print,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
@@ -20,7 +20,7 @@ pub struct Console {
 impl Console {
     pub fn new(content: String) -> Result<Self, Error> {
         terminal::enable_raw_mode()?;
-        execute!(std::io::stdout(), EnterAlternateScreen, Hide)?;
+        execute!(std::io::stdout(), EnterAlternateScreen)?;
         let size = terminal::size()?;
 
         Ok(Console {
@@ -50,6 +50,7 @@ impl Console {
                 Print(line.to_owned() + "\n")
             )?;
         }
+        queue!(std::io::stdout(), MoveTo(self.cursor.0, self.cursor.1))?;
         std::io::stdout().flush()?;
         Ok(())
     }
@@ -105,7 +106,7 @@ impl Console {
 
 impl Drop for Console {
     fn drop(&mut self) {
-        execute!(std::io::stdout(), LeaveAlternateScreen, Show)
+        execute!(std::io::stdout(), LeaveAlternateScreen)
             .expect("Failed to exit alternate screen!");
         terminal::disable_raw_mode().expect("Failed to disable raw mode!");
     }
