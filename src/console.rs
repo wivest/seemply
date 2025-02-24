@@ -127,10 +127,7 @@ impl Console {
 
     fn scroll_down(&mut self, by: u16) {
         let calc = self.scroll + by;
-        let mut count = 0;
-        for _ in self.content.lines() {
-            count += 1;
-        }
+        let count = self.content.lines().count() as u16;
         self.scroll = if calc >= count { count - 1 } else { calc };
     }
 
