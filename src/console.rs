@@ -11,7 +11,6 @@ use crossterm::{
 };
 
 pub struct Console {
-    width: u16,
     height: u16,
     cursor: (u16, u16),
     content: Vec<String>,
@@ -25,7 +24,6 @@ impl Console {
         let size = terminal::size()?;
 
         Ok(Console {
-            width: size.0,
             height: size.1,
             cursor: (0, 0),
             content: content.lines().map(|l| l.to_owned()).collect(),
@@ -76,7 +74,7 @@ impl Console {
         self.scroll_up(delta);
         self.cursor.1 = actual;
 
-        Ok(())
+        self.cursor_right(0)
     }
 
     pub fn cursor_down(&mut self, by: u16) -> Result<(), Error> {
@@ -92,7 +90,7 @@ impl Console {
         self.scroll_down(delta);
         self.cursor.1 = actual;
 
-        Ok(())
+        self.cursor_right(0)
     }
 
     pub fn cursor_left(&mut self, by: u16) -> Result<(), Error> {
@@ -107,11 +105,8 @@ impl Console {
 
     pub fn cursor_right(&mut self, by: u16) -> Result<(), Error> {
         let calc = self.cursor.0 + by;
-        self.cursor.0 = if calc >= self.width {
-            self.width - 1
-        } else {
-            calc
-        };
+        let line = self.content[(self.scroll + self.cursor.1) as usize].len() as u16;
+        self.cursor.0 = if calc >= line { line } else { calc };
         execute!(stdout(), MoveToColumn(self.cursor.0))?;
         Ok(())
     }
