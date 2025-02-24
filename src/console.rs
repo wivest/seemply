@@ -4,13 +4,14 @@ use std::{
 };
 
 use crossterm::{
-    cursor::{MoveTo, MoveToRow},
+    cursor::{MoveTo, MoveToColumn, MoveToRow},
     execute, queue,
     style::Print,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
 pub struct Console {
+    width: u16,
     height: u16,
     cursor: (u16, u16),
     content: String,
@@ -24,6 +25,7 @@ impl Console {
         let size = terminal::size()?;
 
         Ok(Console {
+            width: size.0,
             height: size.1,
             cursor: (0, 0),
             content,
@@ -82,6 +84,27 @@ impl Console {
         self.scroll_down(delta);
         self.cursor.1 = actual;
 
+        Ok(())
+    }
+
+    pub fn cursor_left(&mut self, by: u16) -> Result<(), Error> {
+        self.cursor.0 = if self.cursor.0 <= by {
+            0
+        } else {
+            self.cursor.0 - by
+        };
+        execute!(std::io::stdout(), MoveToColumn(self.cursor.0))?;
+        Ok(())
+    }
+
+    pub fn cursor_right(&mut self, by: u16) -> Result<(), Error> {
+        let calc = self.cursor.0 + by;
+        self.cursor.0 = if calc >= self.width {
+            self.width - 1
+        } else {
+            calc
+        };
+        execute!(std::io::stdout(), MoveToColumn(self.cursor.0))?;
         Ok(())
     }
 

@@ -22,6 +22,12 @@ fn main() {
         if command == b's' {
             con.cursor_down(1).expect("Failed to move cursor!");
         }
+        if command == b'a' {
+            con.cursor_left(1).expect("Failed to move cursor!");
+        }
+        if command == b'd' {
+            con.cursor_right(1).expect("Failed to move cursor!");
+        }
         con.print().expect("Failed to print content!");
     }
 }
