@@ -1,5 +1,5 @@
 use std::{
-    io::{Error, Read, Write},
+    io::{stdout, Error, Read, Write},
     u8,
 };
 
@@ -21,7 +21,7 @@ pub struct Console {
 impl Console {
     pub fn new(content: String) -> Result<Self, Error> {
         terminal::enable_raw_mode()?;
-        execute!(std::io::stdout(), EnterAlternateScreen)?;
+        execute!(stdout(), EnterAlternateScreen)?;
         let size = terminal::size()?;
 
         Ok(Console {
@@ -34,7 +34,7 @@ impl Console {
     }
 
     pub fn print(&self) -> Result<(), Error> {
-        queue!(std::io::stdout(), MoveTo(0, 0))?;
+        queue!(stdout(), MoveTo(0, 0))?;
 
         let lines = self.content.lines();
         let mut i = 0;
@@ -47,7 +47,7 @@ impl Console {
                 break;
             }
             queue!(
-                std::io::stdout(),
+                stdout(),
                 Clear(terminal::ClearType::CurrentLine),
                 Print(line.to_owned() + "\n")
             )?;
@@ -55,14 +55,14 @@ impl Console {
         while i < self.height + self.scroll - 1 {
             i += 1;
             queue!(
-                std::io::stdout(),
+                stdout(),
                 Clear(terminal::ClearType::CurrentLine),
                 Print("\n")
             )?;
         }
 
-        queue!(std::io::stdout(), MoveTo(self.cursor.0, self.cursor.1))?;
-        std::io::stdout().flush()?;
+        queue!(stdout(), MoveTo(self.cursor.0, self.cursor.1))?;
+        stdout().flush()?;
         Ok(())
     }
 
@@ -73,7 +73,7 @@ impl Console {
             (self.cursor.1 - by, 0)
         };
 
-        execute!(std::io::stdout(), MoveToRow(actual))?;
+        execute!(stdout(), MoveToRow(actual))?;
         self.scroll_up(delta);
         self.cursor.1 = actual;
 
@@ -89,7 +89,7 @@ impl Console {
         };
         let delta = calc - actual;
 
-        execute!(std::io::stdout(), MoveToRow(actual))?;
+        execute!(stdout(), MoveToRow(actual))?;
         self.scroll_down(delta);
         self.cursor.1 = actual;
 
@@ -102,7 +102,7 @@ impl Console {
         } else {
             self.cursor.0 - by
         };
-        execute!(std::io::stdout(), MoveToColumn(self.cursor.0))?;
+        execute!(stdout(), MoveToColumn(self.cursor.0))?;
         Ok(())
     }
 
@@ -113,7 +113,7 @@ impl Console {
         } else {
             calc
         };
-        execute!(std::io::stdout(), MoveToColumn(self.cursor.0))?;
+        execute!(stdout(), MoveToColumn(self.cursor.0))?;
         Ok(())
     }
 
@@ -143,8 +143,7 @@ impl Console {
 
 impl Drop for Console {
     fn drop(&mut self) {
-        execute!(std::io::stdout(), LeaveAlternateScreen)
-            .expect("Failed to exit alternate screen!");
+        execute!(stdout(), LeaveAlternateScreen).expect("Failed to exit alternate screen!");
         terminal::disable_raw_mode().expect("Failed to disable raw mode!");
     }
 }
