@@ -52,6 +52,15 @@ impl Console {
                 Print(line.to_owned() + "\n")
             )?;
         }
+        while i < self.height + self.scroll - 1 {
+            i += 1;
+            queue!(
+                std::io::stdout(),
+                Clear(terminal::ClearType::CurrentLine),
+                Print("\n")
+            )?;
+        }
+
         queue!(std::io::stdout(), MoveTo(self.cursor.0, self.cursor.1))?;
         std::io::stdout().flush()?;
         Ok(())
