@@ -105,7 +105,11 @@ impl Console {
 
     pub fn cursor_right(&mut self, by: u16) -> Result<(), Error> {
         let calc = self.cursor.0 + by;
-        let line = self.content[(self.scroll + self.cursor.1) as usize].len() as u16;
+        let line = self
+            .content
+            .get((self.scroll + self.cursor.1) as usize)
+            .unwrap_or(&String::from(""))
+            .len() as u16;
         self.cursor.0 = if calc >= line { line } else { calc };
         execute!(stdout(), MoveToColumn(self.cursor.0))?;
         Ok(())
