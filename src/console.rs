@@ -14,7 +14,7 @@ pub struct Console {
     width: u16,
     height: u16,
     cursor: (u16, u16),
-    content: String,
+    content: Vec<String>,
     scroll: u16,
 }
 
@@ -28,7 +28,7 @@ impl Console {
             width: size.0,
             height: size.1,
             cursor: (0, 0),
-            content,
+            content: content.lines().map(|l| l.to_owned()).collect(),
             scroll: 0,
         })
     }
@@ -36,9 +36,8 @@ impl Console {
     pub fn print(&self) -> Result<(), Error> {
         queue!(stdout(), Hide, MoveTo(0, 0))?;
 
-        let lines = self.content.lines();
         let mut i = 0;
-        for line in lines {
+        for line in &self.content {
             i += 1;
             if i <= self.scroll {
                 continue;
@@ -127,7 +126,7 @@ impl Console {
 
     fn scroll_down(&mut self, by: u16) {
         let calc = self.scroll + by;
-        let count = self.content.lines().count() as u16;
+        let count = self.content.len() as u16;
         self.scroll = if calc >= count { count - 1 } else { calc };
     }
 
