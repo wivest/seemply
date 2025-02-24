@@ -4,7 +4,7 @@ use std::{
 };
 
 use crossterm::{
-    cursor::{MoveTo, MoveToColumn, MoveToRow},
+    cursor::{Hide, MoveTo, MoveToColumn, MoveToRow, Show},
     execute, queue,
     style::Print,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
@@ -34,7 +34,7 @@ impl Console {
     }
 
     pub fn print(&self) -> Result<(), Error> {
-        queue!(stdout(), MoveTo(0, 0))?;
+        queue!(stdout(), Hide, MoveTo(0, 0))?;
 
         let lines = self.content.lines();
         let mut i = 0;
@@ -61,7 +61,7 @@ impl Console {
             )?;
         }
 
-        queue!(stdout(), MoveTo(self.cursor.0, self.cursor.1))?;
+        queue!(stdout(), MoveTo(self.cursor.0, self.cursor.1), Show)?;
         stdout().flush()?;
         Ok(())
     }
