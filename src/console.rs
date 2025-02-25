@@ -71,7 +71,9 @@ impl Console {
         };
 
         execute!(stdout(), MoveToRow(actual))?;
-        self.scroll_up(delta);
+        if delta != 0 {
+            self.scroll_up(delta);
+        }
         self.cursor.1 = actual;
 
         self.cursor_right(0)
@@ -87,7 +89,9 @@ impl Console {
         let delta = calc - actual;
 
         execute!(stdout(), MoveToRow(actual))?;
-        self.scroll_down(delta);
+        if delta != 0 {
+            self.scroll_down(delta);
+        }
         self.cursor.1 = actual;
 
         self.cursor_right(0)
