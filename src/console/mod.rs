@@ -10,9 +10,13 @@ use crossterm::{
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
+use cursor::Cursor;
+
+mod cursor;
+
 pub struct Console {
     height: u16,
-    cursor: (u16, u16),
+    cursor: Cursor,
     content: Vec<String>,
     scroll: u16,
 }
@@ -25,7 +29,7 @@ impl Console {
 
         Ok(Console {
             height: size.1,
-            cursor: (0, 0),
+            cursor: Cursor { x: 0, y: 0 },
             content: content.lines().map(|l| l.to_owned()).collect(),
             scroll: 0,
         })
@@ -58,29 +62,29 @@ impl Console {
             )?;
         }
 
-        queue!(stdout(), MoveTo(self.cursor.0, self.cursor.1), Show)?;
+        queue!(stdout(), MoveTo(self.cursor.x, self.cursor.y), Show)?;
         stdout().flush()?;
         Ok(())
     }
 
     pub fn cursor_up(&mut self, by: u16) -> Result<(), Error> {
-        let (actual, delta) = if self.cursor.1 <= by {
-            (0, by - self.cursor.1)
+        let (actual, delta) = if self.cursor.y <= by {
+            (0, by - self.cursor.y)
         } else {
-            (self.cursor.1 - by, 0)
+            (self.cursor.y - by, 0)
         };
 
         execute!(stdout(), MoveToRow(actual))?;
         if delta != 0 {
             self.scroll_up(delta);
         }
-        self.cursor.1 = actual;
+        self.cursor.y = actual;
 
         self.cursor_right(0)
     }
 
     pub fn cursor_down(&mut self, by: u16) -> Result<(), Error> {
-        let calc = self.cursor.1 + by;
+        let calc = self.cursor.y + by;
         let actual = if calc >= self.height {
             self.height - 1
         } else {
@@ -92,30 +96,30 @@ impl Console {
         if delta != 0 {
             self.scroll_down(delta);
         }
-        self.cursor.1 = actual;
+        self.cursor.y = actual;
 
         self.cursor_right(0)
     }
 
     pub fn cursor_left(&mut self, by: u16) -> Result<(), Error> {
-        self.cursor.0 = if self.cursor.0 <= by {
+        self.cursor.x = if self.cursor.x <= by {
             0
         } else {
-            self.cursor.0 - by
+            self.cursor.x - by
         };
-        execute!(stdout(), MoveToColumn(self.cursor.0))?;
+        execute!(stdout(), MoveToColumn(self.cursor.x))?;
         Ok(())
     }
 
     pub fn cursor_right(&mut self, by: u16) -> Result<(), Error> {
-        let calc = self.cursor.0 + by;
+        let calc = self.cursor.x + by;
         let line = self
             .content
-            .get((self.scroll + self.cursor.1) as usize)
+            .get((self.scroll + self.cursor.y) as usize)
             .unwrap_or(&String::from(""))
             .len() as u16;
-        self.cursor.0 = if calc >= line { line } else { calc };
-        execute!(stdout(), MoveToColumn(self.cursor.0))?;
+        self.cursor.x = if calc >= line { line } else { calc };
+        execute!(stdout(), MoveToColumn(self.cursor.x))?;
         Ok(())
     }
 
