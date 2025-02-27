@@ -29,7 +29,11 @@ impl Console {
 
         Ok(Console {
             height: size.1,
-            cursor: Cursor { x: 0, y: 0 },
+            cursor: Cursor {
+                x: 0,
+                y: 0,
+                saved: 0,
+            },
             content: content.lines().map(|l| l.to_owned()).collect(),
             scroll: 0,
         })
@@ -107,6 +111,7 @@ impl Console {
         } else {
             self.cursor.x - by
         };
+        self.cursor.saved = self.cursor.x;
         execute!(stdout(), MoveToColumn(self.cursor.x))?;
         Ok(())
     }
@@ -119,6 +124,7 @@ impl Console {
             .unwrap_or(&String::from(""))
             .len() as u16;
         self.cursor.x = if calc >= line { line } else { calc };
+        self.cursor.saved = self.cursor.x;
         execute!(stdout(), MoveToColumn(self.cursor.x))?;
         Ok(())
     }
