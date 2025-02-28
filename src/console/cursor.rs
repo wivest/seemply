@@ -1,5 +1,3 @@
-use std::io::Error;
-
 pub struct Cursor {
     pub display: u16,
     pub x: u16,
@@ -17,7 +15,7 @@ impl Cursor {
         }
     }
 
-    pub fn up(&mut self, by: u16) -> Result<u16, Error> {
+    pub fn up(&mut self, by: u16) -> u16 {
         let delta;
         (self.y, delta) = if self.y <= by {
             (0, by - self.y)
@@ -25,10 +23,10 @@ impl Cursor {
             (self.y - by, 0)
         };
 
-        Ok(delta)
+        delta
     }
 
-    pub fn down(&mut self, by: u16) -> Result<u16, Error> {
+    pub fn down(&mut self, by: u16) -> u16 {
         let calc = self.y + by;
         self.y = if calc >= self.height {
             self.height - 1
@@ -36,28 +34,23 @@ impl Cursor {
             calc
         };
 
-        let delta = calc - self.y;
-        Ok(delta)
+        calc - self.y
     }
 
-    pub fn left(&mut self, by: u16) -> Result<(), Error> {
+    pub fn left(&mut self, by: u16) {
         self.display = if self.x <= by { 0 } else { self.display - by };
 
         if by != 0 {
             self.x = self.display;
         }
-
-        Ok(())
     }
 
-    pub fn right(&mut self, by: u16, line: u16) -> Result<(), Error> {
+    pub fn right(&mut self, by: u16, line: u16) {
         let calc = self.x + by;
         self.display = if calc >= line { line } else { calc };
 
         if by != 0 {
             self.x = self.display;
         }
-
-        Ok(())
     }
 }
