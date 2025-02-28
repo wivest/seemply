@@ -17,16 +17,27 @@ fn main() {
             break;
         }
         if command == b'w' {
-            con.cursor_up(1).expect("Failed to move cursor!");
+            let delta = con.cursor.up(1).expect("Failed to move cursor!");
+            if delta != 0 {
+                con.scroll_up(delta);
+            }
+            let line = con.get_line_width();
+            con.cursor.right(0, line).expect("Failed to move cursor!");
         }
         if command == b's' {
-            con.cursor_down(1).expect("Failed to move cursor!");
+            let delta = con.cursor.down(1).expect("Failed to move cursor!");
+            if delta != 0 {
+                con.scroll_down(delta);
+            }
+            let line = con.get_line_width();
+            con.cursor.right(0, line).expect("Failed to move cursor!");
         }
         if command == b'a' {
-            con.cursor_left(1).expect("Failed to move cursor!");
+            con.cursor.left(1).expect("Failed to move cursor!");
         }
         if command == b'd' {
-            con.cursor_right(1).expect("Failed to move cursor!");
+            let line = con.get_line_width();
+            con.cursor.right(1, line).expect("Failed to move cursor!");
         }
         con.print().expect("Failed to print content!");
     }
