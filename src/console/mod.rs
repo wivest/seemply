@@ -30,9 +30,9 @@ impl Console {
         Ok(Console {
             height: size.1,
             cursor: Cursor {
-                x: 0,
+                display: 0,
                 y: 0,
-                saved: 0,
+                x: 0,
             },
             content: content.lines().map(|l| l.to_owned()).collect(),
             scroll: 0,
@@ -66,7 +66,7 @@ impl Console {
             )?;
         }
 
-        queue!(stdout(), MoveTo(self.cursor.x, self.cursor.y), Show)?;
+        queue!(stdout(), MoveTo(self.cursor.display, self.cursor.y), Show)?;
         stdout().flush()?;
         Ok(())
     }
@@ -106,13 +106,17 @@ impl Console {
     }
 
     pub fn cursor_left(&mut self, by: u16) -> Result<(), Error> {
-        self.cursor.x = if self.cursor.x <= by {
+        self.cursor.display = if self.cursor.x <= by {
             0
         } else {
-            self.cursor.x - by
+            self.cursor.display - by
         };
-        self.cursor.saved = self.cursor.x;
-        execute!(stdout(), MoveToColumn(self.cursor.x))?;
+
+        if by != 0 {
+            self.cursor.x = self.cursor.display;
+        }
+
+        execute!(stdout(), MoveToColumn(self.cursor.display))?;
         Ok(())
     }
 
@@ -123,9 +127,13 @@ impl Console {
             .get((self.scroll + self.cursor.y) as usize)
             .unwrap_or(&String::from(""))
             .len() as u16;
-        self.cursor.x = if calc >= line { line } else { calc };
-        self.cursor.saved = self.cursor.x;
-        execute!(stdout(), MoveToColumn(self.cursor.x))?;
+        self.cursor.display = if calc >= line { line } else { calc };
+
+        if by != 0 {
+            self.cursor.x = self.cursor.display;
+        }
+
+        execute!(stdout(), MoveToColumn(self.cursor.display))?;
         Ok(())
     }
 
