@@ -1,9 +1,4 @@
-use std::io::{stdout, Error};
-
-use crossterm::{
-    cursor::{MoveToColumn, MoveToRow},
-    execute,
-};
+use std::io::Error;
 
 pub struct Cursor {
     pub display: u16,
@@ -23,30 +18,25 @@ impl Cursor {
     }
 
     pub fn up(&mut self, by: u16) -> Result<u16, Error> {
-        let (actual, delta) = if self.y <= by {
+        let delta;
+        (self.y, delta) = if self.y <= by {
             (0, by - self.y)
         } else {
             (self.y - by, 0)
         };
-
-        execute!(stdout(), MoveToRow(actual))?;
-        self.y = actual;
 
         Ok(delta)
     }
 
     pub fn down(&mut self, by: u16) -> Result<u16, Error> {
         let calc = self.y + by;
-        let actual = if calc >= self.height {
+        self.y = if calc >= self.height {
             self.height - 1
         } else {
             calc
         };
-        let delta = calc - actual;
 
-        execute!(stdout(), MoveToRow(actual))?;
-        self.y = actual;
-
+        let delta = calc - self.y;
         Ok(delta)
     }
 
@@ -57,7 +47,6 @@ impl Cursor {
             self.x = self.display;
         }
 
-        execute!(stdout(), MoveToColumn(self.display))?;
         Ok(())
     }
 
@@ -69,7 +58,6 @@ impl Cursor {
             self.x = self.display;
         }
 
-        execute!(stdout(), MoveToColumn(self.display))?;
         Ok(())
     }
 }
