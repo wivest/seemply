@@ -1,4 +1,4 @@
-use console::Console;
+use console::{Console, State};
 use std::fs;
 
 mod args;
@@ -38,6 +38,12 @@ fn main() {
         if command == b'd' {
             let line = con.get_line_width();
             con.cursor.right(1, line);
+        }
+        if command == b'i' {
+            con.state = State::Input;
+        }
+        if command == b'c' {
+            con.state = State::Control;
         }
         con.print().expect("Failed to print content!");
     }

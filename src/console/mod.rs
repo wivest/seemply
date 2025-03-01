@@ -14,8 +14,14 @@ use cursor::Cursor;
 
 mod cursor;
 
+pub enum State {
+    Control,
+    Input,
+}
+
 pub struct Console {
     pub cursor: Cursor,
+    pub state: State,
     height: u16,
     content: Vec<String>,
     scroll: u16,
@@ -28,8 +34,9 @@ impl Console {
         let size = terminal::size()?;
 
         Ok(Console {
-            height: size.1,
             cursor: Cursor::new(size),
+            state: State::Control,
+            height: size.1,
             content: content.lines().map(|l| l.to_owned()).collect(),
             scroll: 0,
         })
