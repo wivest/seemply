@@ -1,10 +1,8 @@
-use std::{
-    io::{stdout, Error, Read, Write},
-    u8,
-};
+use std::io::{stdout, Error, Write};
 
 use crossterm::{
     cursor::{Hide, MoveTo, Show},
+    event::{self, Event},
     execute, queue,
     style::Print,
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
@@ -88,10 +86,9 @@ impl Console {
         self.scroll = if calc >= count { count - 1 } else { calc };
     }
 
-    pub fn ask_command() -> Result<u8, Error> {
-        let mut buf: [u8; 1] = [0; 1];
-        std::io::stdin().read_exact(&mut buf)?;
-        Ok(buf[0])
+    pub fn ask_command() -> Result<Event, Error> {
+        let event = event::read()?;
+        Ok(event)
     }
 
     pub fn get_line_width(&self) -> u16 {
