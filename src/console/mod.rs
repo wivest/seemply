@@ -121,12 +121,13 @@ impl<'a> Console<'a> {
                 .get_mut((self.scroll + self.cursor.y - 1) as usize)
                 .unwrap_or(empty);
 
+            let old = previous.len() as u16;
             previous.push_str(line);
-            let len = previous.len() as u16;
+            let updated = previous.len() as u16;
             self.content.remove((self.scroll + self.cursor.y) as usize);
 
             self.cursor.up(1);
-            self.cursor.right(u16::MAX, len);
+            self.cursor.right(old, updated);
         }
     }
 
