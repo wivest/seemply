@@ -97,8 +97,21 @@ impl<'a> Console<'a> {
             .get_mut((self.scroll + self.cursor.y) as usize)
             .unwrap_or(empty);
 
-        line.insert(self.cursor.x as usize, ch);
+        line.insert(self.cursor.display as usize, ch);
         self.cursor.right(1, line.len() as u16);
+    }
+
+    pub fn backspace(&mut self) {
+        let empty = &mut String::from("");
+        let line = self
+            .content
+            .get_mut((self.scroll + self.cursor.y) as usize)
+            .unwrap_or(empty);
+
+        if self.cursor.display != 0 {
+            line.remove(self.cursor.display as usize - 1);
+            self.cursor.left(1);
+        }
     }
 
     pub fn ask_command() -> Result<Event, Error> {
