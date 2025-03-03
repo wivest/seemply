@@ -83,16 +83,27 @@ impl<'a> Console<'a> {
         self.scroll = if calc >= count { count - 1 } else { calc };
     }
 
-    pub fn ask_command() -> Result<Event, Error> {
-        let event = event::read()?;
-        Ok(event)
-    }
-
     pub fn get_line_width(&self) -> u16 {
         self.content
             .get((self.scroll + self.cursor.y) as usize)
             .unwrap_or(&String::from(""))
             .len() as u16
+    }
+
+    pub fn insert_char(&mut self, ch: char) {
+        let empty = &mut String::from("");
+        let line = self
+            .content
+            .get_mut((self.scroll + self.cursor.y) as usize)
+            .unwrap_or(empty);
+
+        line.insert(self.cursor.x as usize, ch);
+        self.cursor.right(1, line.len() as u16);
+    }
+
+    pub fn ask_command() -> Result<Event, Error> {
+        let event = event::read()?;
+        Ok(event)
     }
 }
 
