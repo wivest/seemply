@@ -111,6 +111,22 @@ impl<'a> Console<'a> {
         if self.cursor.display != 0 {
             line.remove(self.cursor.display as usize - 1);
             self.cursor.left(1);
+        } else if self.scroll + self.cursor.y != 0 {
+            let line = line.to_owned();
+            let line = line.as_str();
+
+            let empty = &mut String::from("");
+            let previous = self
+                .content
+                .get_mut((self.scroll + self.cursor.y - 1) as usize)
+                .unwrap_or(empty);
+
+            previous.push_str(line);
+            let len = previous.len() as u16;
+            self.content.remove((self.scroll + self.cursor.y) as usize);
+
+            self.cursor.up(1);
+            self.cursor.right(u16::MAX, len);
         }
     }
 
