@@ -1,5 +1,5 @@
-use console::{Console, State};
-use crossterm::event::{Event, KeyCode, KeyEventKind};
+use console::Console;
+use crossterm::event::{Event, KeyEventKind};
 use std::fs;
 
 mod args;
@@ -13,40 +13,11 @@ fn main() {
     con.print().expect("Failed to print content!");
 
     loop {
-        let event = Console::ask_command().expect("Failed to ask command!");
+        let event = Console::ask_command().expect("Failed to read command!");
         if let Event::Key(key) = event {
             if key.kind != KeyEventKind::Release {
-                if key.code == KeyCode::Char('q') {
+                if !con.state.handle_input(key.code, &mut con) {
                     break;
-                }
-                if key.code == KeyCode::Char('w') {
-                    let delta = con.cursor.up(1);
-                    if delta != 0 {
-                        con.scroll_up(delta);
-                    }
-                    let line = con.get_line_width();
-                    con.cursor.right(0, line);
-                }
-                if key.code == KeyCode::Char('s') {
-                    let delta = con.cursor.down(1);
-                    if delta != 0 {
-                        con.scroll_down(delta);
-                    }
-                    let line = con.get_line_width();
-                    con.cursor.right(0, line);
-                }
-                if key.code == KeyCode::Char('a') {
-                    con.cursor.left(1);
-                }
-                if key.code == KeyCode::Char('d') {
-                    let line = con.get_line_width();
-                    con.cursor.right(1, line);
-                }
-                if key.code == KeyCode::Char('i') {
-                    con.state = State::Input;
-                }
-                if key.code == KeyCode::Esc {
-                    con.state = State::Control;
                 }
             }
         }

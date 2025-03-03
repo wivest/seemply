@@ -9,23 +9,20 @@ use crossterm::{
 };
 
 use cursor::Cursor;
+use state::{Control, State};
 
 mod cursor;
+mod state;
 
-pub enum State {
-    Control,
-    Input,
-}
-
-pub struct Console {
+pub struct Console<'a> {
     pub cursor: Cursor,
-    pub state: State,
+    pub state: &'a dyn State,
     height: u16,
     content: Vec<String>,
     scroll: u16,
 }
 
-impl Console {
+impl<'a> Console<'a> {
     pub fn new(content: String) -> Result<Self, Error> {
         terminal::enable_raw_mode()?;
         execute!(stdout(), EnterAlternateScreen)?;
@@ -33,7 +30,7 @@ impl Console {
 
         Ok(Console {
             cursor: Cursor::new(size),
-            state: State::Control,
+            state: &Control,
             height: size.1,
             content: content.lines().map(|l| l.to_owned()).collect(),
             scroll: 0,
@@ -99,7 +96,7 @@ impl Console {
     }
 }
 
-impl Drop for Console {
+impl<'a> Drop for Console<'a> {
     fn drop(&mut self) {
         execute!(stdout(), LeaveAlternateScreen).expect("Failed to exit alternate screen!");
         terminal::disable_raw_mode().expect("Failed to disable raw mode!");
