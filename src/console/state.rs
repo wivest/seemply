@@ -50,6 +50,7 @@ impl State for Input {
     fn handle_input(&self, code: KeyCode, con: &mut Console) -> bool {
         match code {
             KeyCode::Esc => con.state = &Control,
+            KeyCode::Enter => con.insert_newline(),
             KeyCode::Backspace => con.backspace(),
             KeyCode::Char(ch) => con.insert_char(ch),
             _ => (),
