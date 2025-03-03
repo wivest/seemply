@@ -44,7 +44,7 @@ fn main() {
             if key.code == KeyCode::Char('i') {
                 con.state = State::Input;
             }
-            if key.code == KeyCode::Char('c') {
+            if key.code == KeyCode::Esc {
                 con.state = State::Control;
             }
         }
