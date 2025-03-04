@@ -2,19 +2,9 @@ pub struct Cursor {
     pub display: u16,
     pub x: u16,
     pub y: u16,
-    height: u16,
 }
 
 impl Cursor {
-    pub fn new(height: u16) -> Self {
-        Cursor {
-            display: 0,
-            x: 0,
-            y: 0,
-            height,
-        }
-    }
-
     pub fn up(&mut self, by: u16) -> u16 {
         let delta;
         (self.y, delta) = if self.y <= by {
@@ -26,13 +16,9 @@ impl Cursor {
         delta
     }
 
-    pub fn down(&mut self, by: u16) -> u16 {
+    pub fn down(&mut self, by: u16, bound: u16) -> u16 {
         let calc = self.y + by;
-        self.y = if calc >= self.height {
-            self.height - 1
-        } else {
-            calc
-        };
+        self.y = if calc >= bound { bound - 1 } else { calc };
 
         calc - self.y
     }

@@ -30,11 +30,11 @@ impl<'a> Console<'a> {
         let content: Vec<String> = content.lines().map(|l| l.to_owned()).collect();
 
         Ok(Console {
-            cursor: Cursor::new(if content.len() as u16 > size.1 {
-                size.1
-            } else {
-                content.len() as u16
-            }),
+            cursor: Cursor {
+                display: 0,
+                x: 0,
+                y: 0,
+            },
             state: &Control,
             height: size.1,
             content,
@@ -94,6 +94,15 @@ impl<'a> Console<'a> {
         };
     }
 
+    pub fn get_bound(&self) -> u16 {
+        let lines = self.content.len() as u16;
+        if lines > self.height {
+            self.height
+        } else {
+            lines
+        }
+    }
+
     pub fn get_line_width(&self) -> u16 {
         self.content
             .get((self.scroll + self.cursor.y) as usize)
@@ -151,7 +160,7 @@ impl<'a> Console<'a> {
 
         let newline = line.split_off(self.cursor.display as usize);
         self.content.insert(self.cursor.y as usize + 1, newline);
-        self.cursor.down(1);
+        self.cursor.down(1, self.get_bound());
         self.cursor.left(self.cursor.x);
     }
 
