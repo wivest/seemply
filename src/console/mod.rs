@@ -159,7 +159,8 @@ impl<'a> Console<'a> {
             .unwrap_or(empty);
 
         let newline = line.split_off(self.cursor.display as usize);
-        self.content.insert(self.cursor.y as usize + 1, newline);
+        self.content
+            .insert((self.scroll + self.cursor.y) as usize + 1, newline);
         let delta = self.cursor.down(1, self.get_bound());
         if delta != 0 {
             self.scroll_down(delta);
