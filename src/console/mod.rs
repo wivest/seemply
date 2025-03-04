@@ -27,12 +27,17 @@ impl<'a> Console<'a> {
         terminal::enable_raw_mode()?;
         execute!(stdout(), EnterAlternateScreen)?;
         let size = terminal::size()?;
+        let content: Vec<String> = content.lines().map(|l| l.to_owned()).collect();
 
         Ok(Console {
-            cursor: Cursor::new(size),
+            cursor: Cursor::new(if content.len() as u16 > size.1 {
+                size.1
+            } else {
+                content.len() as u16
+            }),
             state: &Control,
             height: size.1,
-            content: content.lines().map(|l| l.to_owned()).collect(),
+            content,
             scroll: 0,
         })
     }
@@ -80,7 +85,13 @@ impl<'a> Console<'a> {
     pub fn scroll_down(&mut self, by: u16) {
         let calc = self.scroll + by;
         let count = self.content.len() as u16;
-        self.scroll = if calc >= count { count - 1 } else { calc };
+        self.scroll = if count < self.height {
+            0
+        } else if calc + self.height <= count {
+            calc
+        } else {
+            count - self.height
+        };
     }
 
     pub fn get_line_width(&self) -> u16 {

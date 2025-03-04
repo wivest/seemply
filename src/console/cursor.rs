@@ -6,12 +6,12 @@ pub struct Cursor {
 }
 
 impl Cursor {
-    pub fn new(size: (u16, u16)) -> Self {
+    pub fn new(height: u16) -> Self {
         Cursor {
             display: 0,
             x: 0,
             y: 0,
-            height: size.1,
+            height,
         }
     }
 
