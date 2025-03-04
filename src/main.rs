@@ -1,15 +1,14 @@
 use console::Console;
 use crossterm::event::{Event, KeyEventKind};
-use std::fs;
 
 mod args;
 mod console;
+mod file;
 
 fn main() {
-    let filename = args::get_filename();
-    let content = get_content(&filename);
+    let path = args::get_filename();
 
-    let mut con = Console::new(content).expect("Failed to initialize console!");
+    let mut con = Console::new(&path).expect("Failed to initialize console!");
     con.print().expect("Failed to print content!");
 
     loop {
@@ -23,8 +22,4 @@ fn main() {
         }
         con.print().expect("Failed to print content!");
     }
-}
-
-fn get_content(filename: &String) -> String {
-    fs::read_to_string(filename).expect("File at specified path doesn't exist!")
 }
