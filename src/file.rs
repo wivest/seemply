@@ -31,31 +31,29 @@ impl File {
         line.insert(idx, ch);
     }
 
-    pub fn backspace(&mut self, row: usize) {
+    pub fn backspace(&mut self, row: usize, cursor: usize) -> bool {
         let empty = &mut String::from("");
         let line = self.lines.get_mut(row).unwrap_or(empty);
 
-        // if self.cursor.display != 0 {
-        //     line.remove(self.cursor.display as usize - 1);
-        //     self.cursor.left(1);
-        // } else if self.scroll + self.cursor.y != 0 {
-        //     let line = line.to_owned();
-        //     let line = line.as_str();
+        if cursor != 0 {
+            line.remove(cursor as usize - 1);
+            false
+        } else if row != 0 {
+            let line = line.to_owned();
+            let line = line.as_str();
 
-        //     let empty = &mut String::from("");
-        //     let previous = self
-        //         .lines
-        //         .get_mut((self.scroll + self.cursor.y - 1) as usize)
-        //         .unwrap_or(empty);
+            let empty = &mut String::from("");
+            let previous = self.lines.get_mut(row - 1).unwrap_or(empty);
 
-        //     let old = previous.len() as u16;
-        //     previous.push_str(line);
-        //     let updated = previous.len() as u16;
-        //     self.lines.remove((self.scroll + self.cursor.y) as usize);
+            let old = previous.len() as u16;
+            previous.push_str(line);
+            let updated = previous.len() as u16;
+            self.lines.remove(row);
 
-        //     self.cursor.up(1);
-        //     self.cursor.right(old, updated);
-        // }
+            true
+        } else {
+            false
+        }
     }
 
     pub fn insert_newline(&mut self, row: usize, idx: usize) {
