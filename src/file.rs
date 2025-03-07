@@ -45,9 +45,7 @@ impl File {
             let empty = &mut String::from("");
             let previous = self.lines.get_mut(row - 1).unwrap_or(empty);
 
-            let old = previous.len() as u16;
             previous.push_str(line);
-            let updated = previous.len() as u16;
             self.lines.remove(row);
 
             true
