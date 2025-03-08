@@ -41,6 +41,9 @@ impl State for Control {
         if code == KeyCode::Char('i') {
             con.state = &Input;
         }
+        if code == KeyCode::Char('r') {
+            con.file.save().expect("Failed to save file!");
+        }
 
         true
     }

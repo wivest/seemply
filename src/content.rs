@@ -1,5 +1,5 @@
-use std::fs::File;
-use std::io::Read;
+use std::fs::{File, OpenOptions};
+use std::io::{Error, Read, Seek, Write};
 
 pub struct Content {
     pub lines: Vec<String>,
@@ -8,12 +8,24 @@ pub struct Content {
 
 impl Content {
     pub fn new(path: &String) -> Self {
-        let mut file = File::open(path).expect("Failed to open file!");
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(path)
+            .expect("Failed to open file!");
         let mut content = String::from("");
         file.read_to_string(&mut content)
             .expect("File at specified path doesn't exist!");
         let lines: Vec<String> = content.lines().map(|l| l.to_owned()).collect();
         Self { lines, file }
+    }
+
+    pub fn save(&mut self) -> Result<(), Error> {
+        let content = self.lines.join("\n");
+        self.file.set_len(0)?;
+        self.file.rewind()?;
+        self.file.write_all(content.as_bytes())?;
+        Ok(())
     }
 
     pub fn get_bound(&self, height: u16) -> u16 {
