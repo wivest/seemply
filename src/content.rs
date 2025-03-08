@@ -21,12 +21,12 @@ impl Content {
         let mut content = String::from("");
         file.read_to_string(&mut content)
             .expect("File at specified path doesn't exist!");
-        let lines: Vec<String> = content.lines().map(|l| l.to_owned()).collect();
+        let lines: Vec<String> = (content + "\n").lines().map(|l| l.to_owned()).collect();
         Self { lines, file }
     }
 
     pub fn save(&mut self) -> Result<(), Error> {
-        let content = self.lines.join("\n");
+        let content = self.lines.join("\r\n");
         self.file.set_len(0)?;
         self.file.rewind()?;
         self.file.write_all(content.as_bytes())?;
