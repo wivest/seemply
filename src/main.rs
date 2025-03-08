@@ -3,7 +3,7 @@ use crossterm::event::{Event, KeyEventKind};
 
 mod args;
 mod console;
-mod file;
+mod content;
 
 fn main() {
     let path = args::get_filename();

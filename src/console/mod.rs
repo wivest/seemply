@@ -8,7 +8,7 @@ use crossterm::{
     terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
-use crate::file::File;
+use crate::content::Content;
 use cursor::Cursor;
 use state::{Control, State};
 
@@ -19,7 +19,7 @@ pub struct Console<'a> {
     pub cursor: Cursor,
     pub state: &'a dyn State,
     height: u16,
-    file: File,
+    file: Content,
     scroll: u16,
 }
 
@@ -37,7 +37,7 @@ impl<'a> Console<'a> {
             },
             state: &Control,
             height: size.1,
-            file: File::new(path),
+            file: Content::new(path),
             scroll: 0,
         })
     }

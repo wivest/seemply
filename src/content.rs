@@ -1,14 +1,19 @@
-use std::fs;
+use std::fs::File;
+use std::io::Read;
 
-pub struct File {
+pub struct Content {
     pub lines: Vec<String>,
+    file: File,
 }
 
-impl File {
+impl Content {
     pub fn new(path: &String) -> Self {
-        let content = fs::read_to_string(path).expect("File at specified path doesn't exist!");
+        let mut file = File::open(path).expect("Failed to open file!");
+        let mut content = String::from("");
+        file.read_to_string(&mut content)
+            .expect("File at specified path doesn't exist!");
         let lines: Vec<String> = content.lines().map(|l| l.to_owned()).collect();
-        Self { lines }
+        Self { lines, file }
     }
 
     pub fn get_bound(&self, height: u16) -> u16 {
