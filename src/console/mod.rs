@@ -5,7 +5,7 @@ use crossterm::{
     event::{self, Event},
     execute, queue,
     style::Print,
-    terminal::{self, Clear, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
 use crate::content::Content;
@@ -45,32 +45,23 @@ impl<'a> Console<'a> {
     pub fn print(&self) -> Result<(), Error> {
         queue!(stdout(), Hide, MoveTo(0, 0))?;
 
-        let mut i = 0;
-        for line in &self.file.lines {
-            i += 1;
-            if i <= self.scroll {
-                continue;
-            }
-            if i >= self.height + self.scroll {
-                break;
-            }
-            queue!(
-                stdout(),
-                Clear(terminal::ClearType::CurrentLine),
-                Print(line.to_owned() + "\n")
-            )?;
+        for i in 0..self.height - 1 {
+            self.print_line((self.scroll + i) as usize, "\n")?;
         }
-        while i < self.height + self.scroll - 1 {
-            i += 1;
-            queue!(
-                stdout(),
-                Clear(terminal::ClearType::CurrentLine),
-                Print("\n")
-            )?;
-        }
+        self.print_line((self.scroll + self.height - 1) as usize, "")?;
 
         queue!(stdout(), MoveTo(self.cursor.display, self.cursor.y), Show)?;
         stdout().flush()?;
+        Ok(())
+    }
+
+    fn print_line(&self, idx: usize, end: &str) -> Result<(), Error> {
+        let line = if idx >= self.file.lines.len() {
+            Print(end.to_owned())
+        } else {
+            Print(self.file.lines[idx].to_owned() + end)
+        };
+        queue!(stdout(), Clear(ClearType::CurrentLine), line)?;
         Ok(())
     }
 
