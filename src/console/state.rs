@@ -1,6 +1,8 @@
+use std::io::stdout;
+
 use super::Console;
 use crate::content::Backspace;
-use crossterm::event::KeyCode;
+use crossterm::{cursor::SetCursorStyle, event::KeyCode, execute};
 
 pub trait State {
     fn handle_input(&self, code: KeyCode, con: &mut Console) -> bool;
@@ -40,6 +42,7 @@ impl State for Control {
         }
         if code == KeyCode::Char('i') {
             con.state = &Input;
+            execute!(stdout(), SetCursorStyle::BlinkingBar).expect("Failed to edit cursor!");
         }
         if code == KeyCode::Char('r') {
             con.file.save().expect("Failed to save file!");
@@ -52,7 +55,10 @@ impl State for Control {
 impl State for Input {
     fn handle_input(&self, code: KeyCode, con: &mut Console) -> bool {
         match code {
-            KeyCode::Esc => con.state = &Control,
+            KeyCode::Esc => {
+                con.state = &Control;
+                execute!(stdout(), SetCursorStyle::BlinkingBlock).expect("Failed to edit cursor!");
+            }
             KeyCode::Enter => {
                 con.file.insert_newline(
                     (con.scroll + con.cursor.y) as usize,
