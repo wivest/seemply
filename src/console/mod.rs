@@ -94,15 +94,6 @@ impl<'a> Console<'a> {
         };
     }
 
-    pub fn get_bound(&self) -> u16 {
-        let lines = self.file.lines.len() as u16;
-        if lines > self.height {
-            self.height
-        } else {
-            lines
-        }
-    }
-
     pub fn get_line_width(&self) -> u16 {
         self.file
             .lines

@@ -24,7 +24,7 @@ impl State for Control {
             con.cursor.right(0, line);
         }
         if code == KeyCode::Char('s') {
-            let delta = con.cursor.down(1, con.get_bound());
+            let delta = con.cursor.down(1, con.file.get_bound(con.height));
             if delta != 0 {
                 con.scroll_down(delta);
             }
