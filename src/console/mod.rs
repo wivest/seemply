@@ -18,7 +18,6 @@ mod state;
 pub struct Console<'a> {
     pub cursor: Cursor,
     pub state: &'a dyn State,
-    height: u16,
     file: Content,
     scroll: u16,
 }
@@ -31,7 +30,6 @@ impl<'a> Console<'a> {
             EnterAlternateScreen,
             SetCursorStyle::BlinkingBlock
         )?;
-        let size = terminal::size()?;
 
         Ok(Self {
             cursor: Cursor {
@@ -40,19 +38,27 @@ impl<'a> Console<'a> {
                 y: 0,
             },
             state: &Control,
-            height: size.1,
             file: Content::new(path),
             scroll: 0,
         })
     }
 
+    pub fn get_height() -> u16 {
+        terminal::size().unwrap_or((1, 1)).1
+    }
+
+    pub fn ask_command() -> Result<Event, Error> {
+        let event = event::read()?;
+        Ok(event)
+    }
+
     pub fn print(&self) -> Result<(), Error> {
         queue!(stdout(), Hide, MoveTo(0, 0))?;
 
-        for i in 0..self.height - 1 {
+        for i in 0..Self::get_height() - 1 {
             self.print_line((self.scroll + i) as usize, "\n")?;
         }
-        self.print_line((self.scroll + self.height - 1) as usize, "")?;
+        self.print_line((self.scroll + Self::get_height() - 1) as usize, "")?;
 
         queue!(stdout(), MoveTo(self.cursor.display, self.cursor.y), Show)?;
         stdout().flush()?;
@@ -80,12 +86,12 @@ impl<'a> Console<'a> {
     pub fn scroll_down(&mut self, by: u16) {
         let calc = self.scroll + by;
         let count = self.file.lines.len() as u16;
-        self.scroll = if count < self.height {
+        self.scroll = if count < Self::get_height() {
             0
-        } else if calc + self.height <= count {
+        } else if calc + Self::get_height() <= count {
             calc
         } else {
-            count - self.height
+            count - Self::get_height()
         };
     }
 
@@ -95,11 +101,6 @@ impl<'a> Console<'a> {
             .get((self.scroll + self.cursor.y) as usize)
             .unwrap_or(&String::from(""))
             .len() as u16
-    }
-
-    pub fn ask_command() -> Result<Event, Error> {
-        let event = event::read()?;
-        Ok(event)
     }
 }
 

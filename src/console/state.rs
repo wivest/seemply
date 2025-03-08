@@ -26,7 +26,9 @@ impl State for Control {
             con.cursor.right(0, line);
         }
         if code == KeyCode::Char('s') {
-            let delta = con.cursor.down(1, con.file.get_bound(con.height));
+            let delta = con
+                .cursor
+                .down(1, con.file.get_bound(Console::get_height()));
             if delta != 0 {
                 con.scroll_down(delta);
             }
@@ -64,7 +66,9 @@ impl State for Input {
                     (con.scroll + con.cursor.y) as usize,
                     con.cursor.display as usize,
                 );
-                let delta = con.cursor.down(1, con.file.get_bound(con.height));
+                let delta = con
+                    .cursor
+                    .down(1, con.file.get_bound(Console::get_height()));
                 if delta != 0 {
                     con.scroll_down(delta);
                 }
