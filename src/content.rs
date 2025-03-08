@@ -6,6 +6,11 @@ pub struct Content {
     file: File,
 }
 
+pub enum Backspace {
+    Single,
+    Chomp(usize),
+}
+
 impl Content {
     pub fn new(path: &String) -> Self {
         let mut file = OpenOptions::new()
@@ -48,13 +53,13 @@ impl Content {
         line.insert(idx, ch);
     }
 
-    pub fn backspace(&mut self, row: usize, idx: usize) -> usize {
+    pub fn backspace(&mut self, row: usize, idx: usize) -> Backspace {
         let empty = &mut String::from("");
         let line = self.lines.get_mut(row).unwrap_or(empty);
 
         if idx != 0 {
             line.remove(idx - 1);
-            0
+            Backspace::Single
         } else if row != 0 {
             let line = line.to_owned();
             let line = line.as_str();
@@ -66,9 +71,9 @@ impl Content {
             previous.push_str(line);
             self.lines.remove(row);
 
-            width
+            Backspace::Chomp(width)
         } else {
-            0
+            Backspace::Single
         }
     }
 

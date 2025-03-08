@@ -1,6 +1,6 @@
-use crossterm::event::KeyCode;
-
 use super::Console;
+use crate::content::Backspace;
+use crossterm::event::KeyCode;
 
 pub trait State {
     fn handle_input(&self, code: KeyCode, con: &mut Console) -> bool;
@@ -65,15 +65,15 @@ impl State for Input {
                 con.cursor.left(con.cursor.x);
             }
             KeyCode::Backspace => {
-                let right = con.file.backspace(
+                match con.file.backspace(
                     (con.scroll + con.cursor.y) as usize,
                     con.cursor.display as usize,
-                );
-                if right != 0 {
-                    con.cursor.up(1);
-                    con.cursor.right(right as u16, right as u16);
-                } else {
-                    con.cursor.left(1);
+                ) {
+                    Backspace::Single => con.cursor.left(1),
+                    Backspace::Chomp(right) => {
+                        con.cursor.up(1);
+                        con.cursor.right(right as u16, right as u16);
+                    }
                 }
             }
             KeyCode::Char(ch) => {
