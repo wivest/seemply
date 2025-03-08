@@ -65,12 +65,13 @@ impl State for Input {
                 con.cursor.left(con.cursor.x);
             }
             KeyCode::Backspace => {
-                let row = (con.scroll + con.cursor.y) as usize;
-                let width = con.file.get_line_width(row - 1);
-                let newline = con.file.backspace(row, con.cursor.display as usize);
-                if newline {
+                let right = con.file.backspace(
+                    (con.scroll + con.cursor.y) as usize,
+                    con.cursor.display as usize,
+                );
+                if right != 0 {
                     con.cursor.up(1);
-                    con.cursor.right(width, width);
+                    con.cursor.right(right as u16, right as u16);
                 } else {
                     con.cursor.left(1);
                 }

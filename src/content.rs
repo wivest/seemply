@@ -48,26 +48,27 @@ impl Content {
         line.insert(idx, ch);
     }
 
-    pub fn backspace(&mut self, row: usize, idx: usize) -> bool {
+    pub fn backspace(&mut self, row: usize, idx: usize) -> usize {
         let empty = &mut String::from("");
         let line = self.lines.get_mut(row).unwrap_or(empty);
 
         if idx != 0 {
             line.remove(idx - 1);
-            false
+            0
         } else if row != 0 {
             let line = line.to_owned();
             let line = line.as_str();
 
             let empty = &mut String::from("");
             let previous = self.lines.get_mut(row - 1).unwrap_or(empty);
+            let width = previous.len();
 
             previous.push_str(line);
             self.lines.remove(row);
 
-            true
+            width
         } else {
-            false
+            0
         }
     }
 
