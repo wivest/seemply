@@ -31,12 +31,12 @@ impl File {
         line.insert(idx, ch);
     }
 
-    pub fn backspace(&mut self, row: usize, cursor: usize) -> bool {
+    pub fn backspace(&mut self, row: usize, idx: usize) -> bool {
         let empty = &mut String::from("");
         let line = self.lines.get_mut(row).unwrap_or(empty);
 
-        if cursor != 0 {
-            line.remove(cursor as usize - 1);
+        if idx != 0 {
+            line.remove(idx - 1);
             false
         } else if row != 0 {
             let line = line.to_owned();

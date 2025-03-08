@@ -50,9 +50,33 @@ impl State for Input {
     fn handle_input(&self, code: KeyCode, con: &mut Console) -> bool {
         match code {
             KeyCode::Esc => con.state = &Control,
-            KeyCode::Enter => con.insert_newline(),
-            KeyCode::Backspace => con.backspace(),
-            KeyCode::Char(ch) => con.insert_char(ch),
+            KeyCode::Enter => {
+                con.file.insert_newline(
+                    (con.scroll + con.cursor.y) as usize,
+                    con.cursor.display as usize,
+                );
+                let delta = con.cursor.down(1, con.file.get_bound(con.height));
+                if delta != 0 {
+                    con.scroll_down(delta);
+                }
+                con.cursor.left(con.cursor.x);
+            }
+            KeyCode::Backspace => {
+                let row = (con.scroll + con.cursor.y) as usize;
+                let width = con.file.get_line_width(row - 1);
+                let newline = con.file.backspace(row, con.cursor.display as usize);
+                if newline {
+                    con.cursor.up(1);
+                    con.cursor.right(width, width);
+                } else {
+                    con.cursor.left(1);
+                }
+            }
+            KeyCode::Char(ch) => {
+                let row = (con.scroll + con.cursor.y) as usize;
+                con.file.insert_char(ch, row, con.cursor.display as usize);
+                con.cursor.right(1, con.file.get_line_width(row));
+            }
             _ => (),
         }
         true
