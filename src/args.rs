@@ -7,7 +7,7 @@ pub fn get_filename() -> String {
 
 fn validate(args: Vec<String>) -> Vec<String> {
     if args.len() != 2 {
-        panic!("Argument length must be 2!");
+        panic!("Exactly one argument must be present!");
     }
-    return args;
+    args
 }
