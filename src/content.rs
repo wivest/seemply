@@ -16,6 +16,7 @@ impl Content {
         let mut file = OpenOptions::new()
             .read(true)
             .write(true)
+            .create(true)
             .open(path)
             .expect("Failed to open file!");
         let mut content = String::from("");
