@@ -12,17 +12,16 @@ pub enum Backspace {
 }
 
 impl Content {
-    pub fn new(path: &String) -> Self {
+    pub fn new(path: &String) -> Result<Self, Error> {
         let mut file = OpenOptions::new()
             .read(true)
             .write(true)
             .open(path)
             .expect("Failed to open file!");
         let mut content = String::from("");
-        file.read_to_string(&mut content)
-            .expect("File at specified path doesn't exist!");
+        file.read_to_string(&mut content)?;
         let lines: Vec<String> = (content + "\n").lines().map(|l| l.to_owned()).collect();
-        Self { lines, file }
+        Ok(Self { lines, file })
     }
 
     pub fn save(&mut self) -> Result<(), Error> {

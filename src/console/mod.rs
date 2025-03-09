@@ -24,23 +24,24 @@ pub struct Console<'a> {
 
 impl<'a> Console<'a> {
     pub fn new(path: &String) -> Result<Self, Error> {
-        terminal::enable_raw_mode()?;
-        execute!(
-            stdout(),
-            EnterAlternateScreen,
-            SetCursorStyle::BlinkingBlock
-        )?;
-
-        Ok(Self {
+        let con = Self {
             cursor: Cursor {
                 display: 0,
                 x: 0,
                 y: 0,
             },
             state: &Control,
-            file: Content::new(path),
+            file: Content::new(path)?,
             scroll: 0,
-        })
+        };
+
+        terminal::enable_raw_mode()?;
+        execute!(
+            stdout(),
+            EnterAlternateScreen,
+            SetCursorStyle::BlinkingBlock
+        )?;
+        Ok(con)
     }
 
     pub fn get_height() -> u16 {
