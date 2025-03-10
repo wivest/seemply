@@ -48,7 +48,7 @@ impl<'a> Console<'a> {
         terminal::size().unwrap_or((1, 1)).1
     }
 
-    pub fn ask_command() -> Result<Event, Error> {
+    pub fn get_event() -> Result<Event, Error> {
         let event = event::read()?;
         Ok(event)
     }

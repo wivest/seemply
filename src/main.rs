@@ -10,18 +10,20 @@ fn main() {
 
     if let Ok(mut con) = Console::new(&path) {
         con.print().expect("Failed to print content!");
-        loop {
-            let event = Console::ask_command().expect("Failed to read command!");
-            if let Event::Key(key) = event {
-                if key.kind != KeyEventKind::Release {
-                    if !con.state.handle_input(key.code, &mut con) {
-                        break;
-                    }
-                }
-            }
+        while handle_input(&mut con) {
             con.print().expect("Failed to print content!");
         }
     } else {
         panic!("Failed to initialize console!");
     }
+}
+
+fn handle_input(con: &mut Console) -> bool {
+    let event = Console::get_event().expect("Failed to read event!");
+    if let Event::Key(key) = event {
+        if key.kind != KeyEventKind::Release {
+            return con.state.handle_input(key.code, con);
+        }
+    }
+    true
 }
