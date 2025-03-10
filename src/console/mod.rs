@@ -20,6 +20,7 @@ pub struct Console<'a> {
     pub state: &'a dyn State,
     file: Content,
     scroll: u16,
+    update: bool,
 }
 
 impl<'a> Console<'a> {
@@ -33,6 +34,7 @@ impl<'a> Console<'a> {
             state: &Control,
             file: Content::new(path)?,
             scroll: 0,
+            update: true,
         };
 
         terminal::enable_raw_mode()?;
@@ -53,16 +55,26 @@ impl<'a> Console<'a> {
         Ok(event)
     }
 
-    pub fn print(&self) -> Result<(), Error> {
+    pub fn request_update(&mut self) {
+        self.update = true;
+    }
+
+    pub fn update(&mut self) -> Result<(), Error> {
+        if self.update {
+            self.update = false;
+            self.print()?;
+        }
+        queue!(stdout(), MoveTo(self.cursor.display, self.cursor.y), Show)?;
+        stdout().flush()
+    }
+
+    fn print(&self) -> Result<(), Error> {
         queue!(stdout(), Hide, MoveTo(0, 0))?;
 
         for i in 0..Self::get_height() - 1 {
             self.print_line((self.scroll + i) as usize, "\n")?;
         }
         self.print_line((self.scroll + Self::get_height() - 1) as usize, "")?;
-
-        queue!(stdout(), MoveTo(self.cursor.display, self.cursor.y), Show)?;
-        stdout().flush()?;
         Ok(())
     }
 
@@ -77,6 +89,8 @@ impl<'a> Console<'a> {
     }
 
     pub fn scroll_up(&mut self, by: u16) {
+        self.request_update();
+
         if self.scroll <= by {
             self.scroll = 0;
         } else {
@@ -85,6 +99,8 @@ impl<'a> Console<'a> {
     }
 
     pub fn scroll_down(&mut self, by: u16) {
+        self.request_update();
+
         let calc = self.scroll + by;
         let count = self.file.lines.len() as u16;
         self.scroll = if count < Self::get_height() {

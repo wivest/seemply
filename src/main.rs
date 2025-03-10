@@ -15,9 +15,9 @@ fn main() {
     };
 
     if let Ok(mut con) = Console::new(&path) {
-        con.print().expect("Failed to print content!");
+        con.update().expect("Failed to update screen!");
         while handle_input(&mut con) {
-            con.print().expect("Failed to print content!");
+            con.update().expect("Failed to update screen!");
         }
     } else {
         println!("Specified path is invalid!");
@@ -30,6 +30,8 @@ fn handle_input(con: &mut Console) -> bool {
         if key.kind != KeyEventKind::Release {
             return con.state.handle_input(key.code, con);
         }
+    } else if let Event::Resize(_, _) = event {
+        con.request_update();
     }
     true
 }

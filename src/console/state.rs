@@ -56,6 +56,7 @@ impl State for Control {
 
 impl State for Input {
     fn handle_input(&self, code: KeyCode, con: &mut Console) -> bool {
+        con.request_update();
         match code {
             KeyCode::Esc => {
                 con.state = &Control;
