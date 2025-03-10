@@ -17,8 +17,7 @@ impl Content {
             .read(true)
             .write(true)
             .create(true)
-            .open(path)
-            .expect("Failed to open file!");
+            .open(path)?;
         let mut content = String::from("");
         file.read_to_string(&mut content)?;
         let lines: Vec<String> = (content + "\n").lines().map(|l| l.to_owned()).collect();

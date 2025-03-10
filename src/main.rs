@@ -6,7 +6,13 @@ mod console;
 mod content;
 
 fn main() {
-    let path = args::get_filename();
+    let path = match args::get_filename() {
+        Some(path) => path,
+        None => {
+            println!("{}", args::HELP);
+            return;
+        }
+    };
 
     if let Ok(mut con) = Console::new(&path) {
         con.print().expect("Failed to print content!");
@@ -14,7 +20,7 @@ fn main() {
             con.print().expect("Failed to print content!");
         }
     } else {
-        panic!("Failed to initialize console!");
+        println!("Specified path is invalid!");
     }
 }
 
