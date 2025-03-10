@@ -1,6 +1,13 @@
 use std::env::args;
 
-pub const HELP: &str = "seemply help page";
+pub const HELP: &str = "Basic terminal-based notepad editor
+
+Usage:
+    seemply <path>
+    seemply [Options]
+
+Options:
+    -h, --help: Display this help page";
 
 pub fn get_filename() -> Option<String> {
     let arg = args().nth(1)?;
