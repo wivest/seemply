@@ -6,6 +6,10 @@ This entire README was written using seemply.
 
 ## Installation
 
+### Download
+
+[Release builds](https://github.com/wivest/seemply/releases) (currently only for **Windows**).
+
 ### Build from source
 
 Firstly, you need to have [Rust](https://www.rust-lang.org/tools/install) installed on your machine.
