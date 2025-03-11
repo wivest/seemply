@@ -10,8 +10,8 @@ This entire README was written using seemply.
 
 Firstly, you need to have [Rust](https://www.rust-lang.org/tools/install) installed on your machine.
 Then clone this repository with `git clone` command.
-Navigate to cloned repo and build project with `cargo build` command.
-Your executable is now located under `./target` folder.
+Navigate to cloned repo and build project with `cargo build --release` command.
+Your executable is now located under `./target/release` folder.
 To access **seemply** from anywhere on your computer add its location to `PATH`.
 
 ## Guidelines
