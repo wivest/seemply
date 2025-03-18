@@ -72,7 +72,7 @@ impl<'a> Console<'a> {
         queue!(stdout(), Hide, MoveTo(0, 0))?;
 
         for i in 0..Self::get_height() - 1 {
-            self.print_line((self.scroll + i) as usize, "\n")?;
+            self.print_line((self.scroll + i) as usize, "\r\n")?;
         }
         self.print_line((self.scroll + Self::get_height() - 1) as usize, "")?;
         Ok(())
